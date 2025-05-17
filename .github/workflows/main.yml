@@ -1,193 +1,48 @@
-import base64
-import os
-from google import genai
-from google.genai import types
+1. Branch Principal (main ou master):
 
+Esta branch deve sempre refletir o estado estável e pronto para produção do projeto (mesmo que não haja uma implantação contínua imediata).
+Proteção: Esta branch deve ser protegida para evitar commits diretos. Todas as alterações devem ser feitas através de Pull Requests (PRs).
+2. Branch de Desenvolvimento (develop):
 
-def generate():
-    client = genai.Client(
-        api_key=os.environ.get("GEMINI_API_KEY"),
-    )
+Esta branch serve como a base para a integração de todas as novas funcionalidades.
+As branches de feature são criadas a partir da develop e, após a conclusão e revisão, são mergeadas de volta para a develop.
+A develop é onde os testes de integração e outras verificações de qualidade são realizadas.
+Periodicamente, quando a develop atinge um estado estável com um conjunto significativo de funcionalidades, ela pode ser mergeada para a main (geralmente marcando uma "release" ou versão).
+3. Branches de Funcionalidade (feature/*):
 
-    model = "gemini-2.5-pro-preview-05-06"
-    contents = [
-        types.Content(
-            role="user",
-            parts=[
-                types.Part.from_text(text="""Sobre o Projeto: Descubra o Teu Superpoder!
-O projeto \"Descubra o Teu Superpoder!\" surge da necessidade de oferecer aos jovens uma ferramenta dinâmica e envolvente para explorar seus talentos e aptidões. Em um momento crucial de escolha e definição de caminhos, muitos se sentem perdidos e inseguros em relação ao futuro profissional. Este projeto se propõe a ser um guia nessa jornada, utilizando uma abordagem que combina informação, interatividade e uma linguagem que dialoga diretamente com o universo jovem.
-Objetivos:
-Autoconhecimento: Estimular a reflexão sobre habilidades, interesses e paixões, auxiliando o jovem a identificar seus pontos fortes.
-Orientação: Apresentar as diversas áreas de atuação profissional de forma clara e acessível, conectando os talentos individuais com as possibilidades do mercado.
-Empoderamento: Motivar o jovem a acreditar em seu potencial e a tomar decisões mais conscientes e confiantes em relação ao seu futuro.
-Engajamento: Utilizar uma linguagem e recursos visuais que capturem a atenção do público-alvo, tornando a experiência de descoberta prazerosa e estimulante.
-Linguagem e Abordagem:
-O projeto adota uma linguagem jovem, descontraída e atual, repleta de gírias, expressões e referências do universo digital. O objetivo é criar uma conexão imediata com o público-alvo, transmitindo a mensagem de forma leve e divertida, sem abrir mão da relevância e do conteúdo informativo.
-A abordagem visual segue a mesma linha, com elementos gráficos vibrantes, cores impactantes e personagens estilizados que remetem ao universo dos super-heróis e dos games. A ideia é mostrar que a descoberta dos próprios talentos pode ser uma aventura emocionante e que cada jovem possui um \"superpoder\" único a ser explorado.
-Público-Alvo:
-O projeto é direcionado a jovens em fase de escolha profissional, especialmente estudantes do ensino médio e recém-formados. A linguagem e o conteúdo foram cuidadosamente elaborados para dialogar com essa faixa etária, considerando seus interesses, suas dúvidas e seus anseios em relação ao futuro.
-Recursos:
-O projeto se materializa em uma plataforma online interativa, que oferece:
-Teste Vocacional: Um teste dinâmico e divertido, com perguntas que exploram diferentes áreas de interesse e habilidades.
-Conteúdo Informativo: Textos, vídeos e infográficos que apresentam as diversas áreas de atuação profissional, suas características e o perfil dos profissionais que se destacam em cada uma delas.
-Imagens Impactantes: Criação de personagens e elementos visuais que representam as diferentes áreas de aptidão, utilizando um estilo moderno e vibrante.
-Posts para Redes Sociais: Conteúdo otimizado para as principais redes sociais, com linguagem jovem e chamadas para ação que incentivam a participação e o compartilhamento.
-Enquetes e Quizzes: Ferramentas interativas para engajar o público e gerar conversas sobre o tema.
-"""),
-            ],
-        ),
-        types.Content(
-            role="model",
-            parts=[
-                types.Part.from_text(text="""Here's a thinking process to arrive at the summary and analysis of the \"Descubra o Teu Superpoder!\" project:
+Para cada nova funcionalidade, componente (ex: feature/chatbot, feature/teste-vocacional), ou tarefa específica, uma nova branch é criada a partir da develop.
+O nome da branch deve ser descritivo e seguir um padrão (ex: feature/implementar-login, feature/design-pagina-inicial).
+Os desenvolvedores trabalham em suas respectivas branches de funcionalidade, realizando commits regulares que descrevam o progresso.
+Boas práticas para commits em branches de funcionalidade:
+Commits frequentes e pequenos.
+Mensagens de commit claras e concisas, explicando o que foi alterado.
+Manter a branch de funcionalidade atualizada com a develop (através de git merge develop ou git rebase develop).
+4. Pull Requests (PRs):
 
-1.  **Understand the Goal:** The request is to \"summarize and analyze\" the provided project description. This means I need to extract the key information and then offer some commentary on its strengths, potential weaknesses, and overall viability.
+Quando uma funcionalidade estiver completa e pronta para ser integrada, o desenvolvedor abre um Pull Request (PR) da sua branch de funcionalidade para a branch develop.
+O PR deve incluir:
+Uma descrição clara do que a funcionalidade implementa e qual problema ela resolve.
+Instruções para reviewers sobre como testar a funcionalidade.
+Referências a issues do GitHub (se aplicável).
+Revisão de Código: Outros membros da equipe revisam o código no PR, fornecendo feedback e sugestões.
+Discussão: O PR serve como um espaço para discussão sobre o código e a implementação.
+Testes Automatizados: Se configurado, o GitHub Actions pode executar testes automatizados no PR para garantir a qualidade do código.
+Aprovação: Após a revisão e as alterações necessárias serem feitas, o PR é aprovado por um ou mais membros da equipe.
+5. Merge para develop:
 
-2.  **First Pass - Skim for Core Idea:**
-    *   Project name: \"Descubra o Teu Superpoder!\"
-    *   Core problem it addresses: Young people feeling lost about future careers.
-    *   Core solution: A dynamic, engaging tool to explore talents/aptitudes.
-    *   Metaphor: Talents as \"superpowers.\"
+Uma vez aprovado, a branch de funcionalidade é mergeada para a branch develop.
+Geralmente, utiliza-se o merge com --no-ff (no fast-forward) para manter um histórico explícito de quando a funcionalidade foi integrada.
+6. Branches de Release (release/*):
 
-3.  **Second Pass - Detailed Information Extraction (Section by Section):**
+Quando a branch develop atinge um estado que representa uma versão a ser lançada (mesmo que seja uma versão interna ou um protótipo significativo), uma branch de release é criada a partir da develop.
+O nome da branch deve indicar a versão (ex: release/1.0.0, release/beta).
+Nesta branch, são realizados os últimos ajustes, correções de bugs específicos para a release e atualizações de documentação da versão.
+Commits na branch de release devem ser apenas para correções críticas da versão.
+Uma vez que a release esteja pronta, ela é mergeada para a main (para marcar a versão oficial) e também é mergeada de volta para a develop (para incorporar as correções na próxima fase de desenvolvimento).
+Uma tag é criada na main para marcar o ponto da release (ex: v1.0.0).
+7. Branches de Correção de Bugs (hotfix/*):
 
-    *   **Sobre o Projeto (About the Project):**
-        *   Need: Offer young people a tool to explore talents/aptitudes.
-        *   Problem: Young people lost/insecure about professional future.
-        *   Proposal: Guide for this journey.
-        *   Approach: Information, interactivity, youth-oriented language.
-
-    *   **Objetivos (Objectives):**
-        *   Autoconhecimento (Self-knowledge): Reflect on skills, interests, passions, identify strengths.
-        *   Orientação (Guidance): Present professional areas clearly, connect talents to market possibilities.
-        *   Empoderamento (Empowerment): Motivate belief in potential, confident decisions.
-        *   Engajamento (Engagement): Language/visuals to capture attention, make discovery pleasurable.
-
-    *   **Linguagem e Abordagem (Language and Approach):**
-        *   Language: Young, relaxed, current (slang, digital references).
-        *   Goal: Immediate connection, light/fun message, relevant content.
-        *   Visuals: Vibrant graphics, impactful colors, stylized characters (superheroes, games).
-        *   Idea: Talent discovery as an exciting adventure, unique \"superpower.\"
-
-    *   **Público-Alvo (Target Audience):**
-        *   Young people in career choice phase.
-        *   Specifically: High school students, recent graduates.
-        *   Tailored language/content for this age group (interests, doubts, anxieties).
-
-    *   **Recursos (Resources):**
-        *   Platform: Interactive online platform.
-        *   Features:
-            *   Teste Vocacional (Vocational Test): Dynamic, fun, explores interests/skills.
-            *   Conteúdo Informativo (Informative Content): Texts, videos, infographics on professional areas, characteristics, successful profiles.
-            *   Imagens Impactantes (Impactful Images): Characters/visuals for aptitude areas (modern, vibrant).
-            *   Posts para Redes Sociais (Social Media Posts): Optimized content, youth language, calls to action.
-            *   Enquetes e Quizzes (Polls and Quizzes): Interactive tools for engagement, conversation.
-
-4.  **Synthesize and Structure the Summary:**
-    *   Start with a concise \"what it is.\"
-    *   Group related points (e.g., objectives, target audience, methods).
-    *   Use clear headings or bullet points for readability.
-    *   Maintain the original Portuguese terminology where appropriate, as the request is in Portuguese.
-
-5.  **Analyze the Project (Strengths, Potential Challenges/Considerations, Overall Impression):**
-
-    *   **Strengths:**
-        *   **Relevance:** Addresses a real and significant need for young people.
-        *   **Approach:** Youth-centric language and visuals are a strong point for engagement. The \"superpower\" metaphor is catchy.
-        *   **Comprehensiveness:** Covers self-knowledge, information, and empowerment.
-        *   **Interactivity:** Online platform with tests, quizzes, and social media integration is well-suited for the target audience.
-        *   **Clarity of Vision:** The project description is well-articulated and coherent.
-
-    *   **Potential Challenges/Considerations (Constructive Criticism):**
-        *   **Vocational Test Quality:** The effectiveness hinges on a well-designed, psychometrically sound (or at least thoughtfully constructed) vocational test. A poorly designed test could be misleading.
-        *   **Content Depth & Accuracy:** Ensuring the \"Conteúdo Informativo\" is up-to-date, accurate, and comprehensive across diverse career paths is a significant undertaking.
-        *   **\"Superpower\" Oversimplification:** While engaging, the \"superpower\" metaphor needs careful handling to avoid oversimplifying complex career choices or creating unrealistic expectations. It should be a gateway, not a definitive label.
-        *   **Competition:** There are other vocational guidance resources. How will this one differentiate itself beyond the \"superpower\" theme? (Though the youth-focus is a good differentiator).
-        *   **Maintenance & Updates:** An online platform requires ongoing maintenance, content updates (new careers, changing market demands), and potentially technical support.
-        *   **Reach & Marketing:** How will the platform reach its target audience effectively? The social media strategy is mentioned, but execution is key.
-        *   **Privacy & Data:** If collecting data (e.g., from tests), how will user privacy be handled?
-
-    *   **Overall Impression:**
-        *   Positive, promising, well-thought-out.
-        *   Addresses a critical need with a creative and engaging approach.
-        *   Success will depend on the quality of execution, especially the vocational test and informational content.
-
-6.  **Refine Language and Structure:**
-    *   Ensure a logical flow.
-    *   Use clear, concise language.
-    *   Check for any repetition or redundancy.
-    *   Make sure the tone is balanced and constructive.
-    *   Add an introductory and concluding sentence to frame the analysis.
-
-7.  **Self-Correction/Improvement during the process:**
-    *   Initially, I might just list features. Then I'd realize I need to *group* them under \"Strengths\" and \"Considerations.\"
-    *   I might forget to mention the \"superpower\" metaphor in the analysis, then add it in because it's central to the project's identity.
-    *   I might initially phrase a \"Challenge\" too negatively, then rephrase it as a \"Consideration\" or \"Point to Ensure\" for a more constructive tone. For example, instead of \"The vocational test might be bad,\" rephrase as \"The effectiveness hinges on a well-designed vocational test.\"
-    *   Ensure I'm not just repeating what the text says, but actually *analyzing* it (e.g., \"This is a strength because...\").
-
-This structured approach ensures all key aspects of the project description are covered, and the analysis is thoughtful and comprehensive."""),
-                types.Part.from_text(text="""Excelente descrição de projeto! Ele parece muito bem pensado e direcionado.
-
-Vamos analisar os pontos principais:
-
-**Resumo do Projeto \"Descubra o Teu Superpoder!\"**
-
-O projeto visa ser uma plataforma online interativa para auxiliar jovens (estudantes do ensino médio e recém-formados) no processo de autoconhecimento e escolha profissional. Através de uma linguagem jovem, descontraída e visualmente atraente (inspirada em super-heróis e games), o projeto busca:
-*   Estimular a identificação de talentos e paixões (\"superpoderes\").
-*   Apresentar diversas áreas de atuação profissional de forma clara.
-*   Conectar esses talentos individuais com as possibilidades do mercado.
-*   Empoderar os jovens para tomar decisões mais conscientes e confiantes sobre o futuro.
-*   Engajar o público através de testes vocacionais, conteúdo informativo (textos, vídeos, infográficos), posts para redes sociais, enquetes e quizzes.
-
-**Análise do Projeto:**
-
-**Pontos Fortes:**
-
-1.  **Relevância e Necessidade:** O projeto ataca uma dor real e significativa: a dificuldade dos jovens em escolher uma carreira e a insegurança associada a essa fase.
-2.  **Linguagem e Abordagem Visual:** A escolha de uma linguagem jovem, com gírias e referências do universo digital, e uma estética vibrante de super-heróis/games é um grande acerto. Isso tem alto potencial de criar conexão imediata e diminuir a resistência a um tema que pode ser visto como \"sério\" ou \"chato\". A metáfora do \"superpoder\" é cativante e positiva.
-3.  **Objetivos Claros e Abrangentes:** Os objetivos (Autoconhecimento, Orientação, Empoderamento, Engajamento) são bem definidos e cobrem aspectos cruciais da jornada de descoberta profissional.
-4.  **Público-Alvo Bem Definido:** Focar em estudantes do ensino médio e recém-formados permite que todo o conteúdo e abordagem sejam altamente customizados.
-5.  **Recursos Interativos e Diversificados:** A combinação de teste vocacional, conteúdo informativo em diferentes formatos (texto, vídeo, infográfico), posts para redes sociais e ferramentas de engajamento (enquetes, quizzes) cria uma experiência rica e dinâmica, atendendo a diferentes preferências de consumo de informação.
-6.  **Foco no Positivo:** A ideia de \"descobrir o superpoder\" é muito mais encorajadora do que simplesmente \"escolher uma profissão\". Isso ajuda a construir autoestima e confiança.
-
-**Pontos de Atenção e Potenciais Desafios:**
-
-1.  **Qualidade do Teste Vocacional:** A eficácia do teste é crucial. Ele precisa ser bem fundamentado (mesmo que lúdico) para oferecer direcionamentos minimamente úteis e não apenas entretenimento superficial que possa gerar frustração ou falsas expectativas.
-2.  **Profundidade e Atualização do Conteúdo:** Manter o conteúdo informativo sobre as diversas áreas de atuação sempre atualizado e com a profundidade necessária para ser útil é um desafio constante. O mercado de trabalho muda rapidamente.
-3.  **Risco de Simplificação Excessiva:** A linguagem de \"superpoderes\" é ótima para engajar, mas é preciso cuidado para não simplificar demais a complexidade das escolhas de carreira e as nuances das diferentes profissões. O projeto deve ser um ponto de partida, incentivando pesquisas mais aprofundadas.
-4.  **Alcance e Divulgação:** Chegar efetivamente ao público-alvo demandará uma estratégia de marketing digital e, possivelmente, parcerias com escolas ou instituições de ensino.
-5.  **Monetização (se aplicável):** O documento não menciona, mas se houver planos de sustentabilidade financeira, como isso seria feito sem comprometer a acessibilidade para o público-alvo (que geralmente tem pouco poder aquisitivo) é uma questão a ser considerada.
-6.  **Expectativas vs. Realidade:** É importante gerenciar as expectativas. O projeto é um guia, uma ferramenta de auxílio, mas a decisão final e a jornada são individuais e complexas.
-
-**Sugestões Adicionais (se aplicável):**
-
-*   **Depoimentos:** Incluir histórias de jovens que \"descobriram seus superpoderes\" ou de profissionais falando sobre suas áreas pode ser inspirador.
-*   **Comunidade:** Considerar a criação de um fórum ou espaço de discussão para que os jovens possam trocar ideias e experiências.
-*   **Mentoria:** Em uma fase futura, talvez conectar jovens com profissionais das áreas de interesse para conversas rápidas ou mentoria.
-*   **Gamificação:** Além da estética, explorar elementos de gamificação na plataforma (pontos, badges, rankings de exploração) pode aumentar ainda mais o engajamento.
-
-**Conclusão:**
-
-O projeto \"Descubra o Teu Superpoder!\" tem um enorme potencial. A proposta é criativa, relevante e muito bem alinhada com as características e necessidades do público-alvo. O sucesso dependerá da qualidade da execução dos recursos (especialmente o teste vocacional e o conteúdo informativo) e da capacidade de engajar e manter a comunidade de usuários ativa. É uma iniciativa louvável e com grandes chances de causar um impacto positivo na vida de muitos jovens."""),
-            ],
-        ),
-        types.Content(
-            role="user",
-            parts=[
-                types.Part.from_text(text="""INSERT_INPUT_HERE"""),
-            ],
-        ),
-    ]
-    generate_content_config = types.GenerateContentConfig(
-        response_mime_type="text/plain",
-    )
-
-    for chunk in client.models.generate_content_stream(
-        model=model,
-        contents=contents,
-        config=generate_content_config,
-    ):
-        print(chunk.text, end="")
-
-if __name__ == "__main__":
-    generate()
+Branches de hotfix são criadas diretamente da branch main quando um bug crítico precisa ser corrigido na versão em produção (ou na última versão estável).
+O nome da branch deve ser descritivo (ex: hotfix/corrigir-erro-login).
+A correção é implementada na branch de hotfix e, após testes e revisão, é mergeada para a main (e uma nova tag é criada para marcar a nova versão corrigida).
+A correção também deve ser mergeada de volta para a develop para garantir que o bug seja corrigido na próxima versão.
