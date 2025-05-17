@@ -1,5 +1,4 @@
 1. Branch Principal (main ou master):
-
 Esta branch deve sempre refletir o estado estável e pronto para produção do projeto (mesmo que não haja uma implantação contínua imediata).
 Proteção: Esta branch deve ser protegida para evitar commits diretos. Todas as alterações devem ser feitas através de Pull Requests (PRs).
 2. Branch de Desenvolvimento (develop):
